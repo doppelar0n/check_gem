@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# check_gem - A nagios plugin to check if gem updates are available.
+# gem outdated returns a list of gems for which updates are available.
+#
+
+# Helper function to display usage
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -w, --warning <number>  Minimum number of gem packages available for upgrade to return WARNING status. Default: 1"
+    echo "  -c, --critical <number> Minimum number of gem packages available for upgrade to return CRITICAL status. Default: 10"
+    echo "  -h, --help              Display this help message."
+}
+
+# Use getopt for option processing
+OPTIONS=$(getopt -o w:,c:,h --long warning:,critical:,help -- "$@")
+if [ $? -ne 0 ]; then
+    usage
+    exit 3
+fi
+eval set -- "$OPTIONS"
+
+# Assign the arguments to meaningful variable names
+WARNING=1
+CRITICAL=10
+
+while true; do
+  case "$1" in
+    -w|--warning)
+      WARNING=$2
+      shift 2
+      ;;
+    -c|--critical)
+      CRITICAL=$2
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      exit 3
+      ;;
+  esac
+done
+
+# Check if the `gem` command exists
+if ! command -v gem &> /dev/null; then
+    echo "UNKNOWN - gem command not found"
+    exit 3
+fi
+
+# Check for outdated gems
+OUTDATED_GEMS=$(gem outdated | wc -l)
+
+# Determine Nagios status
+if [ "$OUTDATED_GEMS" -ge "$CRITICAL" ]; then
+    echo "CRITICAL - $OUTDATED_GEMS gem(s) need updates"
+    exit 2
+elif [ "$OUTDATED_GEMS" -ge "$WARNING" ]; then
+    echo "WARNING - $OUTDATED_GEMS gem(s) need updates"
+    exit 1
+else
+    echo "OK - $OUTDATED_GEMS gem(s) need updates"
+    exit 0
+fi
