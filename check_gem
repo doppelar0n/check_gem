@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 #
 # check_gem - A nagios plugin to check if gem updates are available.
-# gem outdated returns a list of gems for which updates are available.
+#
+# GitHub: https://github.com/doppelar0n/check_gem
+# License: MIT
 #
 
 # Helper function to display usage
