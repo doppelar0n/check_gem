@@ -23,6 +23,12 @@ Run the script with the following parameters:
 /usr/lib/nagios/plugins/check_gem -w 5 -c 20
 ```
 
+### Options
+
+- `-w`, `--warning <number>`  Minimum number of gem packages available for upgrade to return `WARNING` status. Default: 1
+- `-c`, `--critical <number>` Minimum number of gem packages available for upgrade to return `CRITICAL` status. Default: 10
+- `-h`, `--help`              Display this help message.
+
 ## Example
 
 ```bash
@@ -30,11 +36,12 @@ Run the script with the following parameters:
 CRITICAL - 16 gem(s) need updates
 ```
 
-### Options
+### Test
 
-- `-w`, `--warning <number>`  Minimum number of gem packages available for upgrade to return `WARNING` status. Default: 1
-- `-c`, `--critical <number>` Minimum number of gem packages available for upgrade to return `CRITICAL` status. Default: 10
-- `-h`, `--help`              Display this help message.
+Run test with:
+```bash
+docker run -it -v "$PWD:/code" bats/bats:latest /code/test
+```
 
 ## License
 
